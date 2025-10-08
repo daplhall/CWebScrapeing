@@ -6,4 +6,11 @@ project(libcurl_exercies
     CXX
 )
 
+enable_testing()
+
+include(dependencies.cmake)
+file(COPY .gdbinit DESTINATION ${CMAKE_BINARY_DIR})
 add_subdirectory(src)
+if(TESTING_ENABLED OR PROJECT_IS_TOP_LEVEL)
+    add_subdirectory(tests)
+endif()
