@@ -1,0 +1,75 @@
+{
+    "version": 6,
+    "include": [],
+    "configurePresets": [
+        {
+            "name": "ci-Base",
+            "hidden": true,
+            "environment": {
+                "GNU_FLAGS": "-Wall -Werror -Wextra -Wpedantic -Wformat=2 -Wno-unused-parameter -Wshadow -Wwrite-strings -Wstrict-prototypes -Wold-style-definition -Wredundant-decls -Wnested-externs -Wmissing-include-dirs"
+            },
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++"
+            }
+        },
+        {
+            "name": "ci-DebugBase",
+            "hidden": true,
+            "inherits": "ci-Base",
+            "binaryDir": "build-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_FLAGS": "$env{GNU_FLAGS} -g3 -O0"
+            }
+        },
+        {
+            "name": "ci-ReleaseBase",
+            "hidden": true,
+            "inherits": "ci-Base",
+            "binaryDir": "build",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_C_FLAGS": "$env{GNU_FLAGS} -O3"
+            }
+        },
+        {
+            "name": "ci-ninja-db",
+            "inherits": "ci-DebugBase",
+            "displayName": "Ninja Debug",
+            "generator": "Ninja"
+        },
+        {
+            "name": "ci-ninja-rel",
+            "inherits": "ci-ReleaseBase",
+            "displayName": "Ninja Release",
+            "generator": "Ninja"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "ci-base",
+            "hidden": true
+        },
+        {
+            "name": "ci-WithTest",
+            "hidden": true,
+            "targets": [
+                "tests"
+            ]
+        },
+        {
+            "name": "ci-Debug",
+            "inherits": "ci-base",
+            "configurePreset": "ci-ninja-db"
+        },
+        {
+            "name": "ci-Release",
+            "inherits": [
+                "ci-base",
+                "ci-WithTest"
+            ],
+            "configurePreset": "ci-ninja-rel"
+        }
+    ]
+}
