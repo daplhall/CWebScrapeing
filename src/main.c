@@ -18,11 +18,11 @@ size_t memory_callback (void *ptr, size_t size, size_t nmemb, void *userdata);
 int
 main (int argc, char *argv[])
 {
-	curl_global_init (CURL_GLOBAL_ALL);
 
 	CURL *handle;
 	struct html_data data;
 
+	curl_global_init (CURL_GLOBAL_ALL);
 	if ((handle = curl_easy_init ())) {
 		CURLcode res;
 		// V| avoids race cond, i need to beable to hande SIGPIPE
