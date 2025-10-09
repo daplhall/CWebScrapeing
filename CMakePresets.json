@@ -52,22 +52,15 @@
             "hidden": true
         },
         {
-            "name": "ci-WithTest",
-            "hidden": true,
-            "targets": [
-                "tests"
-            ]
-        },
-        {
             "name": "ci-debug",
             "inherits": "ci-base",
             "configurePreset": "ci-ninja-db"
         },
         {
             "name": "ci-release",
-            "inherits": [
-                "ci-base",
-                "ci-WithTest"
+            "targets": [
+                "scraper",
+                "tests"
             ],
             "configurePreset": "ci-ninja-rel"
         }

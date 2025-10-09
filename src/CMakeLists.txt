@@ -1,13 +1,14 @@
-add_executable(start
+add_executable(scraper
     main.c
 )
 
-target_include_directories(start
+target_include_directories(scraper
     PRIVATE
     "${PROJECT_SOURCE_DIR}/include"
 )
 
-target_link_libraries(start
+target_link_libraries(scraper
+    curl
     foo
 )
 
