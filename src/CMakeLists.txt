@@ -4,7 +4,7 @@ add_executable(start
 
 target_include_directories(start
     PRIVATE
-    ../include
+    "${PROJECT_SOURCE_DIR}/include"
 )
 
 target_link_libraries(start

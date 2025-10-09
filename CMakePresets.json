@@ -59,12 +59,12 @@
             ]
         },
         {
-            "name": "ci-Debug",
+            "name": "ci-debug",
             "inherits": "ci-base",
             "configurePreset": "ci-ninja-db"
         },
         {
-            "name": "ci-Release",
+            "name": "ci-release",
             "inherits": [
                 "ci-base",
                 "ci-WithTest"
