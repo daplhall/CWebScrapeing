@@ -1,3 +1,8 @@
 add_library(foo
-    main.c
+    callback.c
+)
+
+target_include_directories(foo
+    PUBLIC
+    "${PROJECT_SOURCE_DIR}/include"
 )

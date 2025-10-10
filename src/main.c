@@ -1,19 +1,10 @@
-#include "foo/main.h"
+#include "foo/callback.h"
 #include <curl/curl.h>
 #include <curl/easy.h>
 #include <curl/typecheck-gcc.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-
-#define NULLTERMBYTE 1
-
-struct html_data {
-	char *html;
-	size_t size;
-};
-
-size_t memory_callback (void *ptr, size_t size, size_t nmemb, void *userdata);
+#include <unistd.h>
 
 int
 main (int argc, char *argv[])
@@ -25,7 +16,7 @@ main (int argc, char *argv[])
 	curl_global_init (CURL_GLOBAL_ALL);
 	if ((handle = curl_easy_init ())) {
 		CURLcode res;
-		// V| avoids race cond, i need to beable to hande SIGPIPE
+		// V| avoids race cond, i need to beable to handle SIGPIPE
 		curl_easy_setopt (handle, CURLOPT_NOSIGNAL, 1L);
 		curl_easy_setopt (handle, CURLOPT_WRITEFUNCTION,
 				  memory_callback);
@@ -42,19 +33,4 @@ main (int argc, char *argv[])
 		}
 	}
 	return EXIT_SUCCESS;
-}
-
-size_t
-memory_callback (void *ptr, size_t size, size_t nmemb, void *userdata)
-{
-	size_t data_size = size * nmemb;
-	struct html_data *data = (struct html_data *)userdata;
-	char *html;
-
-	html = (char *)malloc (data_size + NULLTERMBYTE);
-	memcpy (html, (char *)ptr, data_size);
-	data->html = html;
-	data->size = data_size;
-
-	return data_size;
 }
