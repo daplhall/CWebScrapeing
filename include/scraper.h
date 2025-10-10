@@ -4,8 +4,8 @@
 extern C
 {
 #endif
-#include "htmldata.h"
-	int Scrape_html (const char *website, HtmlData *data);
+#include <tidybuffio.h>
+	int Scrape_html (const char *website, TidyBuffer *data);
 #ifdef __cplusplus
 }
 #endif

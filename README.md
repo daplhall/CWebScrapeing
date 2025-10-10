@@ -18,3 +18,7 @@ HtmlData_create()
 HtmlData_free()
 HtmlData_get() -> string html
 HtmlData_set(string html)
+
+# CLangd
+
+cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1

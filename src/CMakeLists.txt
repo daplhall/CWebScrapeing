@@ -1,6 +1,6 @@
 add_executable(scraper
     main.c
-    htmldata.c
+    #htmldata.c
     scraper.c
 )
 
