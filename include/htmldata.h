@@ -6,11 +6,14 @@ extern C
 #endif
 
 #define T HtmlData
-	typedef struct T *T;
-	T HtmlData_create (void);
-	void HtmlData_destroy (T htmldata);
-	char *HtmlData_get (T htmldata);
-	void HtmlData_set (T html, char *inpt);
+#include <stddef.h>
+	struct T {
+		char *data; // should be null terminated
+		size_t size;
+	};
+	void HtmlData_init (struct T * inpt);
+	void HtmlData_cleanup (struct T * html);
+
 #undef T
 
 #ifdef __cplusplus

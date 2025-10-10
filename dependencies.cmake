@@ -1,6 +1,6 @@
 #========= Req ==========#
 find_package(CURL REQUIRED)
-#find_package(htmltidy REQUIRED)
+find_package(LibXml2 REQUIRED)
 
 #========= GTest ==========#
 if (CMAKE_TESTING_ENABLED)
