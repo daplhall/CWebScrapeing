@@ -6,7 +6,8 @@ add_executable(scraper
 
 
 target_link_libraries(scraper
-    curl
+    CURL::libcurl
+    tidy
 )
 
 target_include_directories(scraper

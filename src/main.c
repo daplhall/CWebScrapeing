@@ -1,7 +1,5 @@
 #include "scraper.h"
 #include <curl/curl.h>
-#include <curl/easy.h>
-#include <curl/typecheck-gcc.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,7 +22,8 @@ write_html (const HtmlData data, const char *fname)
 int
 main (int argc, char *argv[])
 {
-	curl_global_init (CURL_GLOBAL_ALL);
+	curl_global_init (
+	    CURL_GLOBAL_ALL); // could be hidden away with a scrape init
 	HtmlData html;
 	html = HtmlData_create ();
 	Scrape_html ("https://example.com", &html);

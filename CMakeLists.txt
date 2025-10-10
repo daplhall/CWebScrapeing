@@ -6,9 +6,9 @@ project(libcurl_exercies
     CXX
 )
 
-enable_testing()
+#enable_testing()
 
-#include(dependencies.cmake)
+include(dependencies.cmake)
 add_subdirectory(src)
 if(TESTING_ENABLED OR PROJECT_IS_TOP_LEVEL)
     add_subdirectory(tests)
