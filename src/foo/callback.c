@@ -1,4 +1,5 @@
 #include "foo/callback.h"
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,8 +17,21 @@ memory_callback (void *ptr, size_t size, size_t nmemb, void *userdata)
 	memcpy (html, (char *)ptr, data_size);
 	data->html = html;
 	data->size = data_size;
-	uint i = 0;
-	for (; i < 0xffffffaa; i++)
-		;
 	return data_size;
+}
+
+int
+write_html (const struct html_data *data, const char *fname)
+{
+	FILE *file;
+	if (!(file = fopen (fname, "w"))) {
+		fprintf (stderr, "error: file %s couldn't open, errno %d\n",
+			 fname, errno);
+		return 0;
+	} else {
+		fputs (data->html, file);
+	}
+
+	fclose (file);
+	return 1;
 }

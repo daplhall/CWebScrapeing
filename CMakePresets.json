@@ -19,7 +19,7 @@
             "inherits": "ci-Base",
             "binaryDir": "build-debug",
             "cacheVariables": {
-                "CMAKE_C_FLAGS": "$env{GNU_FLAGS} -g3 -O0"
+                "CMAKE_C_FLAGS": "$env{GNU_FLAGS} -g3 -O0 -fsanitize=address"
             }
         },
         {
@@ -28,7 +28,7 @@
             "inherits": "ci-Base",
             "binaryDir": "build",
             "cacheVariables": {
-                "CMAKE_C_FLAGS": "$env{GNU_FLAGS} -pg -g"
+                "CMAKE_C_FLAGS": "$env{GNU_FLAGS} -O3"
             }
         },
         {

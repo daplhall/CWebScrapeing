@@ -4,7 +4,6 @@
 #include <curl/typecheck-gcc.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 
 int
 main (int argc, char *argv[])
@@ -26,11 +25,15 @@ main (int argc, char *argv[])
 		if ((res = curl_easy_perform (handle)) != CURLE_OK) {
 			fprintf (stderr, "error: %s \n",
 				 curl_easy_strerror (res));
-		} else {
-			printf ("data packet size: %lu\n"
-				"HTML:%s\n",
-				data.size, data.html);
+			return EXIT_FAILURE;
 		}
+		// write_html (&data, "example.html");
+		curl_easy_cleanup (handle);
+		free (data.html);
+	} else {
+		fprintf (stderr, "error, handle could not be created\n");
+		return EXIT_FAILURE;
 	}
+	curl_global_cleanup ();
 	return EXIT_SUCCESS;
 }
