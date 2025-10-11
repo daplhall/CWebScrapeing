@@ -1,5 +1,4 @@
 #include "scrape/scraper.h"
-#include "scrape/htmldata.h"
 #include "stack.h"
 #include <assert.h>
 #include <curl/curl.h>
@@ -114,14 +113,17 @@ Scrape_website (char const *site, char const *expr[], size_t nexpr,
 
 static void
 fetch_data (struct Scrape_expr_data *object, Stack out,
-	    scrape_callback callback)
+	    Scrape_callback callbacks[])
 {
 	size_t remaining = object->size;
 	xmlXPathObjectPtr *iter = object->exprs;
+	Scrape_callback *callbackiter = callbacks;
 	while (remaining--) {
 		xmlXPathContextPtr context = object->context;
 		xmlXPathObjectPtr scraped;
+		Scrape_callback callback;
 		scraped = *iter++;
+		callback = *callbackiter++;
 		for (int i = 0; i < scraped->nodesetval->nodeNr; ++i) {
 			xmlNodePtr datanode = scraped->nodesetval->nodeTab[i];
 			xmlXPathSetContextNode (datanode, context);
@@ -131,8 +133,8 @@ fetch_data (struct Scrape_expr_data *object, Stack out,
 }
 
 int
-Scrape_proccess (char const *website, char const *expr[], size_t nexpr,
-		 scrape_callback callback)
+Scrape_proccess (char const *website, char const *expr[],
+		 Scrape_callback callbacks[], size_t nexpr)
 {
 	Stack stack;
 	struct Scrape_expr_data expr_objects;
@@ -144,7 +146,7 @@ Scrape_proccess (char const *website, char const *expr[], size_t nexpr,
 		Scrape_expr_data_cleanup (&expr_objects);
 		return FAILURE;
 	}
-	fetch_data (&expr_objects, stack, callback);
+	fetch_data (&expr_objects, stack, callbacks);
 
 	Stack_free (stack);
 	Scrape_expr_data_cleanup (&expr_objects);

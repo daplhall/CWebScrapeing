@@ -6,7 +6,7 @@ extern C
 #endif
 #include "htmldata.h"
 #include <libxml/xpath.h>
-	typedef void (*scrape_callback) (xmlXPathContextPtr context);
+	typedef void (*Scrape_callback) (xmlXPathContextPtr context);
 
 	struct Scrape_expr_data {
 		xmlXPathObjectPtr *exprs;
@@ -24,7 +24,7 @@ extern C
 	int Scrape_website (char const *site, char const *expr[], size_t nexpr,
 			    struct Scrape_expr_data *out);
 	int Scrape_proccess (char const *website, char const *expr[],
-			     size_t nexpr, scrape_callback callback);
+			     Scrape_callback callbacks[], size_t nexpr);
 
 #ifdef __cplusplus
 }
