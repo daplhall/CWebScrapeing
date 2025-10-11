@@ -10,14 +10,17 @@ The program needs `libcurl` and `tidy`
 ADT: Scraper
 ADT: HtmlData // just a data structure
 
-Scraper_html(string "<webpage>", out : HtmlData*)
-Scraper_create()
-Scraper_free()
+Scrape_html
+callback_html
+find_in_html(xmlXpathQuery);
 
 HtmlData_create()
 HtmlData_free()
 HtmlData_get() -> string html
 HtmlData_set(string html)
+
+
+scraper_html->proccess_html->search_html
 
 # CLangd
 

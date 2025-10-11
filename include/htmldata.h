@@ -7,6 +7,7 @@ extern C
 
 #define T HtmlData
 #include <stddef.h>
+
 	struct T {
 		char *data; // should be null terminated
 		size_t size;

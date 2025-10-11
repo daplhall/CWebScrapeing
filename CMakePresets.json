@@ -19,6 +19,7 @@
             "inherits": "ci-Base",
             "binaryDir": "build-debug",
             "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "debug",
                 "CMAKE_C_FLAGS": "$env{GNU_FLAGS} -g3 -O0 -fsanitize=address -fsanitize=leak"
             }
         },
@@ -28,6 +29,7 @@
             "inherits": "ci-Base",
             "binaryDir": "build",
             "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
                 "CMAKE_C_FLAGS": "$env{GNU_FLAGS} -O3"
             }
         },

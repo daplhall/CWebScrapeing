@@ -2,6 +2,8 @@ add_executable(scraper
     main.c
     htmldata.c
     scraper.c
+    scraping_course.c
+    stack.c
 )
 
 
