@@ -77,11 +77,12 @@ Scrape_html (const char *site, struct HtmlData *rawhtml)
 }
 
 int
-Scrape_eval_expr (struct HtmlData *rawhtml, char const *exprs[], size_t nexpr,
-		  struct Scrape_expr_data *out)
+Scrape_eval_expr (struct HtmlData *rawhtml, struct Scrape_instr exprs[static 1],
+		  size_t nexpr, struct Scrape_expr_data *out)
 {
 	xmlXPathObjectPtr *iter;
-	char const **instr = exprs;
+	// char const **instr = instr->expr;
+	struct Scrape_instr *instr = exprs;
 
 	assert (nexpr > 0);
 	out->doc = htmlReadMemory (rawhtml->data, rawhtml->size, NULL, "utf-8",
@@ -89,16 +90,16 @@ Scrape_eval_expr (struct HtmlData *rawhtml, char const *exprs[], size_t nexpr,
 	out->context = xmlXPathNewContext (out->doc);
 	iter = out->exprs;
 	do {
-		*iter++
-		    = xmlXPathEvalExpression ((xmlChar *)*instr, out->context);
+		*iter++ = xmlXPathEvalExpression ((xmlChar *)instr->expr,
+						  out->context);
 	} while (++instr < exprs + nexpr);
 
 	return SUCCESS;
 }
 
 int
-Scrape_website (char const *site, char const *expr[], size_t nexpr,
-		struct Scrape_expr_data *out)
+Scrape_website (char const *site, struct Scrape_instr instr[static 1],
+		size_t nexpr, struct Scrape_expr_data *out)
 {
 	struct HtmlData html;
 	HtmlData_init (&html);
@@ -106,24 +107,24 @@ Scrape_website (char const *site, char const *expr[], size_t nexpr,
 		fprintf (stderr, "error: Scraping the website failed\n");
 		return FAILURE;
 	}
-	Scrape_eval_expr (&html, expr, nexpr, out);
+	Scrape_eval_expr (&html, instr, nexpr, out);
 	HtmlData_cleanup (&html);
 	return SUCCESS;
 }
 
 static void
 fetch_data (struct Scrape_expr_data *object, Stack out,
-	    Scrape_callback callbacks[])
+	    struct Scrape_instr instr[static 1])
 {
 	size_t remaining = object->size;
 	xmlXPathObjectPtr *iter = object->exprs;
-	Scrape_callback *callbackiter = callbacks;
+	struct Scrape_instr *instructiter = instr;
 	while (remaining--) {
 		xmlXPathContextPtr context = object->context;
 		xmlXPathObjectPtr scraped;
 		Scrape_callback callback;
 		scraped = *iter++;
-		callback = *callbackiter++;
+		callback = (instructiter++)->callback;
 		for (int i = 0; i < scraped->nodesetval->nodeNr; ++i) {
 			xmlNodePtr datanode = scraped->nodesetval->nodeTab[i];
 			xmlXPathSetContextNode (datanode, context);
@@ -133,20 +134,20 @@ fetch_data (struct Scrape_expr_data *object, Stack out,
 }
 
 int
-Scrape_proccess (char const *website, char const *expr[],
-		 Scrape_callback callbacks[], size_t nexpr)
+Scrape_proccess (char const *website, struct Scrape_instr instr[static 1],
+		 size_t nexpr)
 {
 	Stack stack;
 	struct Scrape_expr_data expr_objects;
 	stack = Stack_create ();
 
 	Scrape_expr_data_init (&expr_objects, nexpr);
-	if (!(Scrape_website (website, expr, nexpr, &expr_objects))) {
+	if (!(Scrape_website (website, instr, nexpr, &expr_objects))) {
 		fprintf (stderr, "error: Scrape_website failed\n");
 		Scrape_expr_data_cleanup (&expr_objects);
 		return FAILURE;
 	}
-	fetch_data (&expr_objects, stack, callbacks);
+	fetch_data (&expr_objects, stack, instr);
 
 	Stack_free (stack);
 	Scrape_expr_data_cleanup (&expr_objects);

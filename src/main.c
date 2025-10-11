@@ -35,14 +35,14 @@ fetch_callback (xmlXPathContextPtr context)
 int
 main (int argc, char *argv[])
 {
-	// callbacks and expr needs to be struct you construct, sucht that we
-	// have a pair
-	char const *expr[] = { "//li[contains(@class, 'product')]" };
-	Scrape_callback callbacks[] = { fetch_callback };
-	size_t nexpr = sizeof (expr) / sizeof (expr[0]);
+	struct Scrape_instr instructions[]
+	    = { { .expr = "//li[contains(@class, 'product')]",
+		  .callback = fetch_callback } };
+
+	size_t nexpr = sizeof (instructions) / sizeof (instructions[0]);
 	curl_global_init (CURL_GLOBAL_ALL);
-	Scrape_proccess ("https://www.scrapingcourse.com/ecommerce/", expr,
-			 callbacks, nexpr);
+	Scrape_proccess ("https://www.scrapingcourse.com/ecommerce/",
+			 instructions, nexpr);
 	curl_global_cleanup ();
 	return EXIT_SUCCESS;
 }
