@@ -1,5 +1,6 @@
-#include "scraper.h"
-#include "htmldata.h"
+#include "scrape/scraper.h"
+#include "scrape/htmldata.h"
+#include "stack.h"
 #include <assert.h>
 #include <curl/curl.h>
 #include <curl/easy.h>
@@ -16,7 +17,7 @@
 void
 Scrape_expr_data_init (struct Scrape_expr_data *inpt, size_t nexpr)
 {
-	inpt->objects
+	inpt->exprs
 	    = (xmlXPathObjectPtr *)malloc (sizeof (xmlXPathContextPtr) * nexpr);
 	inpt->size = nexpr;
 	inpt->context = NULL;
@@ -26,11 +27,11 @@ Scrape_expr_data_init (struct Scrape_expr_data *inpt, size_t nexpr)
 void
 Scrape_expr_data_cleanup (struct Scrape_expr_data *inpt)
 {
-	xmlXPathObjectPtr *ptr = inpt->objects;
+	xmlXPathObjectPtr *ptr = inpt->exprs;
 	size_t nexpr = inpt->size;
 	while (nexpr--)
 		xmlXPathFreeObject (*ptr++);
-	free (inpt->objects);
+	free (inpt->exprs);
 	if (inpt->context)
 		xmlXPathFreeContext (inpt->context);
 	inpt->size = 0;
@@ -87,7 +88,7 @@ Scrape_eval_expr (struct HtmlData *rawhtml, char const *exprs[], size_t nexpr,
 	out->doc = htmlReadMemory (rawhtml->data, rawhtml->size, NULL, "utf-8",
 				   HTML_PARSE_NOERROR);
 	out->context = xmlXPathNewContext (out->doc);
-	iter = out->objects;
+	iter = out->exprs;
 	do {
 		*iter++
 		    = xmlXPathEvalExpression ((xmlChar *)*instr, out->context);
@@ -108,5 +109,44 @@ Scrape_website (char const *site, char const *expr[], size_t nexpr,
 	}
 	Scrape_eval_expr (&html, expr, nexpr, out);
 	HtmlData_cleanup (&html);
+	return SUCCESS;
+}
+
+static void
+fetch_data (struct Scrape_expr_data *object, Stack out,
+	    scrape_callback callback)
+{
+	size_t remaining = object->size;
+	xmlXPathObjectPtr *iter = object->exprs;
+	while (remaining--) {
+		xmlXPathContextPtr context = object->context;
+		xmlXPathObjectPtr scraped;
+		scraped = *iter++;
+		for (int i = 0; i < scraped->nodesetval->nodeNr; ++i) {
+			xmlNodePtr datanode = scraped->nodesetval->nodeTab[i];
+			xmlXPathSetContextNode (datanode, context);
+			callback (context);
+		}
+	}
+}
+
+int
+Scrape_proccess (char const *website, char const *expr[], size_t nexpr,
+		 scrape_callback callback)
+{
+	Stack stack;
+	struct Scrape_expr_data expr_objects;
+	stack = Stack_create ();
+
+	Scrape_expr_data_init (&expr_objects, nexpr);
+	if (!(Scrape_website (website, expr, nexpr, &expr_objects))) {
+		fprintf (stderr, "error: Scrape_website failed\n");
+		Scrape_expr_data_cleanup (&expr_objects);
+		return FAILURE;
+	}
+	fetch_data (&expr_objects, stack, callback);
+
+	Stack_free (stack);
+	Scrape_expr_data_cleanup (&expr_objects);
 	return SUCCESS;
 }
