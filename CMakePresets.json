@@ -17,7 +17,7 @@
             "name": "ci-DebugBase",
             "hidden": true,
             "inherits": "ci-Base",
-            "binaryDir": "build-debug",
+            "binaryDir": "build/db",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "debug",
                 "CMAKE_C_FLAGS": "$env{GNU_FLAGS} -g3 -O0 -fsanitize=address -fsanitize=leak"
@@ -27,9 +27,19 @@
             "name": "ci-ReleaseBase",
             "hidden": true,
             "inherits": "ci-Base",
-            "binaryDir": "build",
+            "binaryDir": "build/rel",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_C_FLAGS": "$env{GNU_FLAGS}"
+            }
+        },
+        {
+            "name": "ci-RelWithDebInfoBase",
+            "hidden": true,
+            "inherits": "ci-Base",
+            "binaryDir": "build/reldb",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo",
                 "CMAKE_C_FLAGS": "$env{GNU_FLAGS}"
             }
         },
@@ -43,6 +53,12 @@
             "name": "ci-ninja-rel",
             "inherits": "ci-ReleaseBase",
             "displayName": "Ninja Release",
+            "generator": "Ninja"
+        },
+        {
+            "name": "ci-ninja-rel-db",
+            "inherits": "ci-RelWithDebInfoBase",
+            "displayName": "Ninja RelWithDebInfo",
             "generator": "Ninja"
         }
     ],
@@ -63,6 +79,13 @@
                 "tests"
             ],
             "configurePreset": "ci-ninja-rel"
+        },
+        {
+            "name": "ci-rel-db",
+            "targets": [
+                "scraper"
+            ],
+            "configurePreset": "ci-ninja-rel-db"
         }
     ]
 }
