@@ -1,5 +1,4 @@
 #include "scrape/scraper.h"
-#include "stack.h"
 #include <assert.h>
 #include <curl/curl.h>
 #include <curl/easy.h>
@@ -77,7 +76,7 @@ Scrape_html (const char *site, struct HtmlData *rawhtml)
 }
 
 int
-Scrape_eval_expr (struct HtmlData *rawhtml, struct Scrape_instr exprs[static 1],
+Scrape_eval_expr (struct HtmlData *rawhtml, struct Scrape_instr exprs[],
 		  size_t nexpr, struct Scrape_expr_data *out)
 {
 	xmlXPathObjectPtr *iter;
@@ -98,8 +97,8 @@ Scrape_eval_expr (struct HtmlData *rawhtml, struct Scrape_instr exprs[static 1],
 }
 
 int
-Scrape_website (char const *site, struct Scrape_instr instr[static 1],
-		size_t nexpr, struct Scrape_expr_data *out)
+Scrape_website (char const *site, struct Scrape_instr instr[], size_t nexpr,
+		struct Scrape_expr_data *out)
 {
 	struct HtmlData html;
 	HtmlData_init (&html);
@@ -113,7 +112,7 @@ Scrape_website (char const *site, struct Scrape_instr instr[static 1],
 }
 
 static void
-fetch_data (struct Scrape_expr_data *object, Stack out,
+fetch_data (struct Scrape_expr_data *object,
 	    struct Scrape_instr instr[static 1])
 {
 	size_t remaining = object->size;
@@ -134,12 +133,9 @@ fetch_data (struct Scrape_expr_data *object, Stack out,
 }
 
 int
-Scrape_proccess (char const *website, struct Scrape_instr instr[static 1],
-		 size_t nexpr)
+Scrape_proccess (char const *website, struct Scrape_instr instr[], size_t nexpr)
 {
-	Stack stack;
 	struct Scrape_expr_data expr_objects;
-	stack = Stack_create ();
 
 	Scrape_expr_data_init (&expr_objects, nexpr);
 	if (!(Scrape_website (website, instr, nexpr, &expr_objects))) {
@@ -147,9 +143,8 @@ Scrape_proccess (char const *website, struct Scrape_instr instr[static 1],
 		Scrape_expr_data_cleanup (&expr_objects);
 		return FAILURE;
 	}
-	fetch_data (&expr_objects, stack, instr);
+	fetch_data (&expr_objects, instr);
 
-	Stack_free (stack);
 	Scrape_expr_data_cleanup (&expr_objects);
 	return SUCCESS;
 }

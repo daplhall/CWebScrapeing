@@ -11,7 +11,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(robotstxt_download)
 
-find_library(robots robots)
 target_include_directories(robots
     PUBLIC
     ${CMAKE_CURRENT_BINARY_DIR}/_deps/robotstxt_download-src/
