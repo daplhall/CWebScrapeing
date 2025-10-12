@@ -71,7 +71,6 @@
             "hidden": true,
             "targets": [
                 "webscraper",
-                "main_cpp",
                 "tests"
             ]
         },
@@ -79,8 +78,7 @@
             "name": "ci-scrapper-no-tests",
             "hidden": true,
             "targets": [
-                "webscraper",
-                "main_cpp"
+                "webscraper"
             ]
         },
         {
