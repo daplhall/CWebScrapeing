@@ -12,11 +12,10 @@
             "hidden": true,
             "environment": {
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "1",
-                "CMAKE_POLICY_VERSION_MINIMUM": "3.5"
-            },
-            "cacheVariables": {
+                "CMAKE_POLICY_VERSION_MINIMUM": "3.5",
                 "SCRAPE_C_LDFLAGS": "",
-                "SCRAPE_DEFAULT_FLAGS": "-Wall -Werror -Wextra -Wpedantic -Wformat=2 -Wno-unused-parameter -Wshadow -Wwrite-strings -Wstrict-prototypes -Wold-style-definition -Wredundant-decls -Wnested-externs -Wmissing-include-dirs",
+                "SCRAPE_C_DEFAULT_FLAGS": "-Wall -Werror -Wextra -Wpedantic -Wformat=2 -Wno-unused-parameter -Wshadow -Wwrite-strings -Wstrict-prototypes -Wold-style-definition -Wredundant-decls -Wnested-externs -Wmissing-include-dirs",
+                "SCRAPE_CXX_DEFAULT_FLAGS": "-Wall -Werror -Wextra -Wpedantic -Wformat=2 -Wno-unused-parameter -Wshadow -Wwrite-strings  -Wredundant-decls -Wmissing-include-dirs",
                 "SCRAPE_DEBUG_FLAGS": "-g3 -O0",
                 "SCRAPE_SANITIZER_FLAGS": "-fsanitize=address -fsanitize=leak",
                 "SCRAPE_RELEASE_FLAGS": "",
@@ -33,7 +32,8 @@
             "binaryDir": "build/db",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "SCRAPE_C_FLAGS": "$env{SCRAPE_DEFAULT_FLAGS} $env{SCRAPE_RELEASE_FLAGS}"
+                "SCRAPE_C_FLAGS": "$env{SCRAPE_C_DEFAULT_FLAGS} $env{SCRAPE_DEBUG_FLAGS} $env{SCRAPE_SANITIZER_FLAGS}",
+                "SCRAPE_CXX_FLAGS": "$env{SCRAPE_CXX_DEFAULT_FLAGS} $env{SCRAPE_DEBUG_FLAGS} $env{SCRAPE_SANITIZER_FLAGS}"
             }
         },
         {
@@ -46,7 +46,8 @@
             "binaryDir": "build/rel",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
-                "SCRAPE_C_FLAGS": "$env{SCRAPE_DEFAULT_FLAGS} $env{SCRAPE_DEBUG_FLAGS} $env{SCRAPE_SANITIZER_FLAGS}"
+                "SCRAPE_C_FLAGS": "$env{SCRAPE_C_DEFAULT_FLAGS} $env{SCRAPE_RELEASE_FLAGS}",
+                "SCRAPE_CXX_FLAGS": "$env{SCRAPE_CXX_DEFAULT_FLAGS} $env{SCRAPE_RELEASE_FLAGS}"
             }
         },
         {
@@ -59,7 +60,8 @@
             "binaryDir": "build/reldb",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "RelWithDebInfo",
-                "SCRAPE_C_FLAGS": "$env{SCRAPE_DEFAULT_FLAGS} $env{SCRAPE_RELWITHDEBINFO_FLAGS}"
+                "SCRAPE_C_FLAGS": "$env{SCRAPE_C_DEFAULT_FLAGS} $env{SCRAPE_RELWITHDEBINFO_FLAGS}",
+                "SCRAPE_CXX_FLAGS": "$env{SCRAPE_CXX_DEFAULT_FLAGS} $env{SCRAPE_RELWITHDEBINFO_FLAGS}"
             }
         }
     ],
@@ -68,7 +70,7 @@
             "name": "ci-scrapper-and-tests",
             "hidden": true,
             "targets": [
-                "scraper",
+                "webscraper",
                 "main_cpp",
                 "tests"
             ]
@@ -77,7 +79,7 @@
             "name": "ci-scrapper-no-tests",
             "hidden": true,
             "targets": [
-                "scraper",
+                "webscraper",
                 "main_cpp"
             ]
         },

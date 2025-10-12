@@ -1,23 +1,14 @@
-set(CMAKE_C_FLAGS $ENV{SCRAPE_C_FLAGS})
-
-
-add_executable(scraper
+set(CMAKE_C_FLAGS "${SCRAPE_C_FLAGS}")
+set(CMAKE_CXX_FLAGS "${SCRAPE_CXX_FLAGS}")
+add_executable(webscraper
     main.c
-    scrape/htmldata.c
-    scrape/scraper.c
-    scrape/xmlhelpers.c
 )
 
-target_link_libraries(scraper
-    CURL::libcurl
-    LibXml2::LibXml2
-)
 
-target_include_directories(scraper
-    PUBLIC
-    "${PROJECT_SOURCE_DIR}/include"
+target_link_libraries(webscraper
+    PRIVATE
+    scrape
 )
-
 
 ###### cpp testing
 add_executable(main_cpp
@@ -38,3 +29,5 @@ target_link_libraries(main_cpp
     CURL::libcurl
     LibXml2::LibXml2
 )
+
+add_subdirectory(scrape)

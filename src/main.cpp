@@ -1,6 +1,5 @@
 #include "scrape/htmldata.h"
 #include "scrape/scraper.h"
-#include <cstdlib>
 #include <curl/curl.h>
 #include <curl/easy.h>
 #include <iostream>
@@ -11,7 +10,6 @@ main ()
 {
 	googlebot::RobotsMatcher matcher;
 	struct HtmlData html;
-	struct Scrape_instr data;
 	const std::vector<std::string> mem = { "Some Scraper", "hellooo" };
 	bool allowed;
 	HtmlData_init (&html);
