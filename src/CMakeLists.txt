@@ -6,7 +6,6 @@ add_executable(scraper
     scrape/xmlhelpers.c
 )
 
-
 target_link_libraries(scraper
     CURL::libcurl
     LibXml2::LibXml2

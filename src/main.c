@@ -38,7 +38,6 @@ main (int argc, char *argv[])
 	struct Scrape_instr instructions[]
 	    = { { .expr = "//li[contains(@class, 'product')]",
 		  .callback = fetch_callback } };
-
 	size_t nexpr = sizeof (instructions) / sizeof (instructions[0]);
 	curl_global_init (CURL_GLOBAL_ALL);
 	Scrape_proccess ("https://www.scrapingcourse.com/ecommerce/",

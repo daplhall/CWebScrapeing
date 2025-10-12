@@ -1,6 +1,22 @@
+include(FetchContent)
+include(ExternalProject)
 #========= Req ==========#
 find_package(CURL REQUIRED)
 find_package(LibXml2 REQUIRED)
+
+FetchContent_Declare(
+    robotstxt_download
+    GIT_REPOSITORY git@github.com:google/robotstxt.git
+    GIT_TAG 86d5836ba2d5a0b6b938ab49501be0e09d9c276c
+)
+FetchContent_MakeAvailable(robotstxt_download)
+
+find_library(robots robots)
+target_include_directories(robots
+    PUBLIC
+    ${CMAKE_CURRENT_BINARY_DIR}/_deps/robotstxt_download-src/
+)
+
 
 #========= GTest ==========#
 if (CMAKE_TESTING_ENABLED)
