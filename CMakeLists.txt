@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 4.1.2)
 
-project(libcurl_exercies
+project(libcurl_exercise
     LANGUAGES
     C
     CXX
