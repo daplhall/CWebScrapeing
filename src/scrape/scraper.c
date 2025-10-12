@@ -36,7 +36,7 @@ Scrape_expr_data_cleanup (struct Scrape_expr_data *inpt)
 }
 
 static size_t
-callback_html (void *ptr, size_t size, size_t nmemb, void *userdata)
+callback_txt (void *ptr, size_t size, size_t nmemb, void *userdata)
 {
 	struct HtmlData *data = (struct HtmlData *)userdata;
 	size_t req_size = size * nmemb;
@@ -61,7 +61,7 @@ Scrape_html (const char *site, struct HtmlData *rawhtml)
 	if ((handle = curl_easy_init ())) {
 		CURLcode err;
 		curl_easy_setopt (handle, CURLOPT_NOSIGNAL, 1L);
-		curl_easy_setopt (handle, CURLOPT_WRITEFUNCTION, callback_html);
+		curl_easy_setopt (handle, CURLOPT_WRITEFUNCTION, callback_txt);
 		curl_easy_setopt (handle, CURLOPT_WRITEDATA, (void *)rawhtml);
 		curl_easy_setopt (handle, CURLOPT_URL, site);
 		if ((err = curl_easy_perform (handle)) != CURLE_OK) {
@@ -79,18 +79,17 @@ int
 Scrape_eval_expr (struct HtmlData *rawhtml, struct Scrape_instr exprs[],
 		  size_t nexpr, struct Scrape_expr_data *out)
 {
-	xmlXPathObjectPtr *iter;
-	// char const **instr = instr->expr;
+	xmlXPathObjectPtr *out_iter;
 	struct Scrape_instr *instr = exprs;
 
 	assert (nexpr > 0);
 	out->doc = htmlReadMemory (rawhtml->data, rawhtml->size, NULL, "utf-8",
 				   HTML_PARSE_NOERROR);
 	out->context = xmlXPathNewContext (out->doc);
-	iter = out->exprs;
+	out_iter = out->exprs;
 	do {
-		*iter++ = xmlXPathEvalExpression ((xmlChar *)instr->expr,
-						  out->context);
+		*out_iter++ = xmlXPathEvalExpression ((xmlChar *)instr->expr,
+						      out->context);
 	} while (++instr < exprs + nexpr);
 
 	return SUCCESS;

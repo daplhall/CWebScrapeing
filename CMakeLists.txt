@@ -7,7 +7,6 @@ project(libcurl_exercise
 )
 
 #enable_testing()
-
 include(dependencies.cmake)
 add_subdirectory(src)
 if(TESTING_ENABLED OR PROJECT_IS_TOP_LEVEL)

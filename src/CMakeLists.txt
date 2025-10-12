@@ -1,8 +1,10 @@
+set(CMAKE_C_FLAGS $ENV{SCRAPE_C_FLAGS})
+
+
 add_executable(scraper
     main.c
     scrape/htmldata.c
     scrape/scraper.c
-    stack.c
     scrape/xmlhelpers.c
 )
 
@@ -22,7 +24,6 @@ add_executable(main_cpp
     main.cpp
     scrape/htmldata.c
     scrape/scraper.c
-    stack.c
     scrape/xmlhelpers.c
 )
 

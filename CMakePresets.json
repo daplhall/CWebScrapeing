@@ -3,95 +3,93 @@
     "include": [],
     "configurePresets": [
         {
-            "name": "ci-Base",
+            "name": "ninja",
+            "hidden": true,
+            "generator": "Ninja"
+        },
+        {
+            "name": "ci-base",
             "hidden": true,
             "environment": {
-                "GNU_C_FLAGS": "-Wall -Werror -Wextra -Wpedantic -Wformat=2 -Wno-unused-parameter -Wshadow -Wwrite-strings -Wstrict-prototypes -Wold-style-definition -Wredundant-decls -Wnested-externs -Wmissing-include-dirs",
-                "GNU_CXX_FLAGS": "-Wall -Werror -Wextra -Wpedantic -Wformat=2 -Wno-unused-parameter -Wshadow -Wwrite-strings -Wredundant-decls -Wmissing-include-dirs",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "1",
                 "CMAKE_POLICY_VERSION_MINIMUM": "3.5"
             },
             "cacheVariables": {
-                "CMAKE_C_COMPILER": "gcc",
-                "CMAKE_CXX_COMPILER": "g++",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "1"
+                "SCRAPE_C_LDFLAGS": "",
+                "SCRAPE_DEFAULT_FLAGS": "-Wall -Werror -Wextra -Wpedantic -Wformat=2 -Wno-unused-parameter -Wshadow -Wwrite-strings -Wstrict-prototypes -Wold-style-definition -Wredundant-decls -Wnested-externs -Wmissing-include-dirs",
+                "SCRAPE_DEBUG_FLAGS": "-g3 -O0",
+                "SCRAPE_SANITIZER_FLAGS": "-fsanitize=address -fsanitize=leak",
+                "SCRAPE_RELEASE_FLAGS": "",
+                "SCRAPE_RELWITHDEBINFO_FLAGS": ""
             }
         },
         {
-            "name": "ci-DebugBase",
-            "hidden": true,
-            "inherits": "ci-Base",
+            "name": "ci-config-db",
+            "inherits": [
+                "ci-base",
+                "ninja"
+            ],
+            "displayName": "Base debug config",
             "binaryDir": "build/db",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "debug",
-                "CMAKE_C_FLAGS": "$env{GNU_C_FLAGS} -g3 -O0 -fsanitize=address -fsanitize=leak",
-                "CMAKE_CXX_FLAGS": "-g3 -O0 -fsanitize=address -fsanitize=leak"
+                "CMAKE_BUILD_TYPE": "Debug",
+                "SCRAPE_C_FLAGS": "$env{SCRAPE_DEFAULT_FLAGS} $env{SCRAPE_RELEASE_FLAGS}"
             }
         },
         {
-            "name": "ci-ReleaseBase",
-            "hidden": true,
-            "inherits": "ci-Base",
+            "name": "ci-config-rel",
+            "inherits": [
+                "ci-base",
+                "ninja"
+            ],
+            "displayName": "base release config",
             "binaryDir": "build/rel",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
-                "CMAKE_C_FLAGS": "$env{GNU_C_FLAGS}",
-                "CMAKE_CXX_FLAGS": ""
+                "SCRAPE_C_FLAGS": "$env{SCRAPE_DEFAULT_FLAGS} $env{SCRAPE_DEBUG_FLAGS} $env{SCRAPE_SANITIZER_FLAGS}"
             }
         },
         {
-            "name": "ci-RelWithDebInfoBase",
-            "hidden": true,
-            "inherits": "ci-Base",
+            "name": "ci-config-rel-db",
+            "inherits": [
+                "ci-base",
+                "ninja"
+            ],
+            "displayName": "base RelWithDebInfo config",
             "binaryDir": "build/reldb",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "RelWithDebInfo",
-                "CMAKE_C_FLAGS": "$env{GNU_FLAGS}"
+                "SCRAPE_C_FLAGS": "$env{SCRAPE_DEFAULT_FLAGS} $env{SCRAPE_RELWITHDEBINFO_FLAGS}"
             }
-        },
-        {
-            "name": "ci-ninja-db",
-            "inherits": "ci-DebugBase",
-            "displayName": "Ninja Debug",
-            "generator": "Ninja"
-        },
-        {
-            "name": "ci-ninja-rel",
-            "inherits": "ci-ReleaseBase",
-            "displayName": "Ninja Release",
-            "generator": "Ninja"
-        },
-        {
-            "name": "ci-ninja-rel-db",
-            "inherits": "ci-RelWithDebInfoBase",
-            "displayName": "Ninja RelWithDebInfo",
-            "generator": "Ninja"
         }
     ],
     "buildPresets": [
         {
-            "name": "ci-base",
-            "hidden": true
-        },
-        {
-            "name": "ci-debug",
-            "inherits": "ci-base",
-            "configurePreset": "ci-ninja-db"
-        },
-        {
-            "name": "ci-release",
+            "name": "ci-scrapper-and-tests",
+            "hidden": true,
             "targets": [
                 "scraper",
                 "main_cpp",
                 "tests"
-            ],
-            "configurePreset": "ci-ninja-rel"
+            ]
         },
         {
-            "name": "ci-rel-db",
+            "name": "ci-scrapper-no-tests",
+            "hidden": true,
             "targets": [
-                "scraper"
-            ],
-            "configurePreset": "ci-ninja-rel-db"
+                "scraper",
+                "main_cpp"
+            ]
+        },
+        {
+            "name": "release",
+            "configurePreset": "ci-config-rel",
+            "inherits": "ci-scrapper-and-tests"
+        },
+        {
+            "name": "debug",
+            "configurePreset": "ci-config-db",
+            "inherits": "ci-scrapper-no-tests"
         }
     ]
 }
