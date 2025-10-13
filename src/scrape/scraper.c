@@ -12,8 +12,15 @@
 #define SUCCESS	     1
 #define FAILURE	     0
 
+struct exprs {
+	xmlXPathObjectPtr *exprs;
+	size_t size;
+	xmlDoc *doc;
+	xmlXPathContextPtr context;
+};
+
 void
-Scrape_expr_data_init (struct Scrape_expr_data *inpt, size_t nexpr)
+expr_init (struct exprs *inpt, size_t nexpr)
 {
 	inpt->exprs
 	    = (xmlXPathObjectPtr *)malloc (sizeof (xmlXPathContextPtr) * nexpr);
@@ -23,7 +30,7 @@ Scrape_expr_data_init (struct Scrape_expr_data *inpt, size_t nexpr)
 }
 
 void
-Scrape_expr_data_cleanup (struct Scrape_expr_data *inpt)
+expr_cleanup (struct exprs *inpt)
 {
 	xmlXPathObjectPtr *ptr = inpt->exprs;
 	size_t nexpr = inpt->size;
@@ -54,17 +61,24 @@ callback_txt (void *ptr, size_t size, size_t nmemb, void *userdata)
 	return req_size;
 }
 
-int
-Scrape_html (const char *site, struct HtmlData *rawhtml)
+static CURLcode
+curl_dump (CURL *handle, char const *url, struct HtmlData *out)
+{
+	curl_easy_setopt (handle, CURLOPT_NOSIGNAL, 1L);
+	curl_easy_setopt (handle, CURLOPT_WRITEFUNCTION, callback_txt);
+	curl_easy_setopt (handle, CURLOPT_WRITEDATA, (void *)out);
+	curl_easy_setopt (handle, CURLOPT_URL, url);
+	return curl_easy_perform (handle);
+}
+
+static int
+scrape (const char *url, struct HtmlData *out)
 {
 	CURL *handle;
 	if ((handle = curl_easy_init ())) {
 		CURLcode err;
-		curl_easy_setopt (handle, CURLOPT_NOSIGNAL, 1L);
-		curl_easy_setopt (handle, CURLOPT_WRITEFUNCTION, callback_txt);
-		curl_easy_setopt (handle, CURLOPT_WRITEDATA, (void *)rawhtml);
-		curl_easy_setopt (handle, CURLOPT_URL, site);
-		if ((err = curl_easy_perform (handle)) != CURLE_OK) {
+		curl_easy_reset (handle);
+		if ((err = curl_dump (handle, url, out)) != CURLE_OK) {
 			fprintf (stderr, "error: %s \n",
 				 curl_easy_strerror (err));
 			curl_easy_cleanup (handle);
@@ -75,48 +89,45 @@ Scrape_html (const char *site, struct HtmlData *rawhtml)
 	return SUCCESS;
 }
 
-int
-Scrape_eval_expr (struct HtmlData *rawhtml, struct Scrape_instr exprs[],
-		  size_t nexpr, struct Scrape_expr_data *out)
+static int
+evaluate_instructions (struct HtmlData const *html,
+		       struct Scrape_instr const instrs[static 1],
+		       size_t ninstrs, struct exprs *nodes)
 {
-	xmlXPathObjectPtr *out_iter;
-	struct Scrape_instr *instr = exprs;
+	xmlXPathObjectPtr *nodes_iter;
 
-	assert (nexpr > 0);
-	out->doc = htmlReadMemory (rawhtml->data, rawhtml->size, NULL, "utf-8",
-				   HTML_PARSE_NOERROR);
-	out->context = xmlXPathNewContext (out->doc);
-	out_iter = out->exprs;
-	do {
-		*out_iter++ = xmlXPathEvalExpression ((xmlChar *)instr->expr,
-						      out->context);
-	} while (++instr < exprs + nexpr);
-
+	assert (ninstrs > 0);
+	nodes->doc = htmlReadMemory (html->data, html->size, NULL, "utf-8",
+				     HTML_PARSE_NOERROR);
+	nodes->context = xmlXPathNewContext (nodes->doc);
+	nodes_iter = nodes->exprs + ninstrs;
+	while (ninstrs)
+		*--nodes_iter = xmlXPathEvalExpression (
+		    (xmlChar *)instrs[--ninstrs].expr, nodes->context);
 	return SUCCESS;
 }
 
-int
-Scrape_website (char const *site, struct Scrape_instr instr[], size_t nexpr,
-		struct Scrape_expr_data *out)
+static int
+get_html (char const *url, struct Scrape_instr instr[static 1], size_t ninstr,
+	  struct exprs *nodes)
 {
-	struct HtmlData html;
-	HtmlData_init (&html);
-	if (!(Scrape_html (site, &html))) {
+	struct HtmlData dump;
+	HtmlData_init (&dump);
+	if (!(scrape (url, &dump))) {
 		fprintf (stderr, "error: Scraping the website failed\n");
 		return FAILURE;
 	}
-	Scrape_eval_expr (&html, instr, nexpr, out);
-	HtmlData_cleanup (&html);
+	evaluate_instructions (&dump, instr, ninstr, nodes);
+	HtmlData_cleanup (&dump);
 	return SUCCESS;
 }
 
 static void
-fetch_data (struct Scrape_expr_data *object,
-	    struct Scrape_instr instr[static 1])
+proccess_html (struct exprs *object, struct Scrape_instr instrs[static 1])
 {
 	size_t remaining = object->size;
 	xmlXPathObjectPtr *iter = object->exprs;
-	struct Scrape_instr *instructiter = instr;
+	struct Scrape_instr *instructiter = instrs;
 	while (remaining--) {
 		xmlXPathContextPtr context = object->context;
 		xmlXPathObjectPtr scraped;
@@ -132,18 +143,19 @@ fetch_data (struct Scrape_expr_data *object,
 }
 
 int
-Scrape_proccess (char const *website, struct Scrape_instr instr[], size_t nexpr)
+Scrape_html (char const *url, struct Scrape_instr instr[static 1],
+	     size_t ninstr)
 {
-	struct Scrape_expr_data expr_objects;
+	struct exprs expr_nodes;
 
-	Scrape_expr_data_init (&expr_objects, nexpr);
-	if (!(Scrape_website (website, instr, nexpr, &expr_objects))) {
+	expr_init (&expr_nodes, ninstr);
+	if (!(get_html (url, instr, ninstr, &expr_nodes))) {
 		fprintf (stderr, "error: Scrape_website failed\n");
-		Scrape_expr_data_cleanup (&expr_objects);
+		expr_cleanup (&expr_nodes);
 		return FAILURE;
 	}
-	fetch_data (&expr_objects, instr);
+	proccess_html (&expr_nodes, instr);
 
-	Scrape_expr_data_cleanup (&expr_objects);
+	expr_cleanup (&expr_nodes);
 	return SUCCESS;
 }

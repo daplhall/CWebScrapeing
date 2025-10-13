@@ -41,9 +41,10 @@ main (int argc, char *argv[])
 		  .callback = fetch_callback } };
 	size_t nexpr = sizeof (instructions) / sizeof (instructions[0]);
 	curl_global_init (CURL_GLOBAL_ALL);
-	Scrape_proccess ("https://www.scrapingcourse.com/ecommerce/",
-			 instructions, nexpr);
+	Scrape_html ("https://www.scrapingcourse.com/ecommerce/", instructions,
+		     nexpr);
 
+	/*
 	struct HtmlData dump;
 	HtmlData_init (&dump);
 	Scrape_html ("webpage/robots.txt", &dump);
@@ -52,6 +53,7 @@ main (int argc, char *argv[])
 				"API or webpage to strip");
 	printf ("Allowed? %d\n", a);
 	HtmlData_cleanup (&dump);
+	*/
 	curl_global_cleanup ();
 	return EXIT_SUCCESS;
 }

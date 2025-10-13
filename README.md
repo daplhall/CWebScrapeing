@@ -11,10 +11,17 @@ My own code is licensed under MIT, however `robottxt` is under apache. The build
 
 # Todo
 1. Finish `robottxt` integration, to do ethical scraping.
-2  Implement [Curl impersonate](https://github.com/lexiforest/curl-impersonate) so the scraper can mask it 
+2  Utilize [Curl impersonate](https://github.com/lexiforest/curl-impersonate) so the scraper can mask it 
 self as a browser (is a bit paradoxical to 1)
 3. write "user" callback for writing to postgres db, which i can spin up with docker.
 4. This is a maybe: Further test better ways if importing `robottxt` as it uses the a decrepit cmake version.
+
+# TODO today
+1. Refactor the code!
+2. write tests
+3. begin on url parser.
+4. Be done with robottxt
+
 # CLangd
 Currently integrated into config presets, should be a user preset
 ```
