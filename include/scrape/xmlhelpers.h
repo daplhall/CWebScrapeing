@@ -5,10 +5,11 @@
 extern "C" {
 #endif
 #include <libxml/xpath.h>
-char *Scraper_xmlGetProp (xmlXPathContextPtr context,
-			  xmlChar *PathEvalExpression, xmlChar *property);
-char *Scraper_xmlGetContent (xmlXPathContextPtr context,
-			     xmlChar *PathEvalExpression);
+void Scraper_xmlGetProp (xmlXPathContextPtr context,
+			 xmlChar *PathEvalExpression, xmlChar *property,
+			 char **out);
+void Scraper_xmlGetContent (xmlXPathContextPtr context,
+			    xmlChar *PathEvalExpression, char **out);
 #ifdef __cplusplus
 }
 #endif

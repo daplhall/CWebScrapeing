@@ -8,9 +8,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define NULLTERMBYTE 1
-#define SUCCESS	     1
-#define FAILURE	     0
+#define SUCCESS 1
+#define FAILURE 0
 
 struct webdump {
 	char *data; // should be null terminated
@@ -149,13 +148,13 @@ proccess_html (struct exprs *object, struct Scrape_instr instrs[static 1])
 {
 	size_t remaining = object->size;
 	xmlXPathObjectPtr *iter = object->exprs;
-	struct Scrape_instr *instructiter = instrs;
+	struct Scrape_instr *instrsptr = instrs;
 	while (remaining--) {
 		xmlXPathContextPtr context = object->context;
 		xmlXPathObjectPtr scraped;
 		Scrape_callback callback;
 		scraped = *iter++;
-		callback = (instructiter++)->callback;
+		callback = (instrsptr++)->callback;
 		for (int i = 0; i < scraped->nodesetval->nodeNr; ++i) {
 			xmlNodePtr datanode = scraped->nodesetval->nodeTab[i];
 			xmlXPathSetContextNode (datanode, context);

@@ -13,15 +13,15 @@ fetch_callback (xmlXPathContextPtr context)
 {
 	char *url, *img, *name, *price;
 	// url
-	url = Scraper_xmlGetProp (context, (xmlChar *)".//a",
-				  (xmlChar *)"href");
+	Scraper_xmlGetProp (context, (xmlChar *)".//a", (xmlChar *)"href",
+			    &url);
 	// Img
-	img = Scraper_xmlGetProp (context, (xmlChar *)".//a/img",
-				  (xmlChar *)"src");
+	Scraper_xmlGetProp (context, (xmlChar *)".//a/img", (xmlChar *)"src",
+			    &img);
 	// name
-	name = Scraper_xmlGetContent (context, (xmlChar *)".//a/h2");
+	Scraper_xmlGetContent (context, (xmlChar *)".//a/h2", &name);
 	// price
-	price = Scraper_xmlGetContent (context, (xmlChar *)".//a/span");
+	Scraper_xmlGetContent (context, (xmlChar *)".//a/span", &price);
 	// Clean up
 	printf ("%s\n", url);
 	printf ("\t%s\n", img);
