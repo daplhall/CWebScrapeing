@@ -1,5 +1,9 @@
+# (WIP) A simple webscraper for C
+![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) The project is currently WIP, and as such the README and program is not finished.  
+
+The goal of this project is just to write a scraper in C for the enjoyment.
 # Prerequisites
-The program needs `libcurl` and `tidy`
+The program needs `libcurl`, `libxml2` and googles `Robotstxt`
 
 # Program steps
 1. Scraping
