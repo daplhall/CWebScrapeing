@@ -164,11 +164,10 @@ proccess_html (struct exprs *object, struct Scrape_instr instrs[static 1])
 }
 
 int
-Scrape_html (char const *url, struct Scrape_instr instr[static 1],
-	     size_t ninstr)
+Scrape_html (char const *url, struct Scrape_instr instr[], size_t ninstr)
 {
 	struct exprs expr_nodes;
-
+	assert (ninstr > 0);
 	expr_init (&expr_nodes, ninstr);
 	if (!(get_html (url, instr, ninstr, &expr_nodes))) {
 		fprintf (stderr, "error: Scrape_website failed\n");

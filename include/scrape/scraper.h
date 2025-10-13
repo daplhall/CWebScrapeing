@@ -11,8 +11,7 @@ struct Scrape_instr {
 	Scrape_callback callback;
 };
 
-int Scrape_html (char const *url, struct Scrape_instr instr[static 1],
-		 size_t ninstr);
+int Scrape_html (char const *url, struct Scrape_instr instr[], size_t ninstr);
 #ifdef __cplusplus
 }
 #endif

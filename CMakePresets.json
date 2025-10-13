@@ -89,7 +89,7 @@
         {
             "name": "debug",
             "configurePreset": "ci-config-db",
-            "inherits": "ci-scrapper-no-tests"
+            "inherits": "ci-scrapper-and-tests"
         }
     ]
 }

@@ -17,7 +17,6 @@ self as a browser (is a bit paradoxical to 1)
 4. This is a maybe: Further test better ways if importing `robottxt` as it uses the a decrepit cmake version.
 
 # TODO today
-1. Refactor the code!
 2. write tests
 3. begin on url parser.
 4. Be done with robottxt
