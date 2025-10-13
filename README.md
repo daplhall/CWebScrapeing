@@ -16,7 +16,7 @@ self as a browser (is a bit paradoxical to 1)
 3. write "user" callback for writing to postgres db, which i can spin up with docker.
 4. This is a maybe: Further test better ways if importing `robottxt` as it uses the a decrepit cmake version.
 
-# TODO today
+## Bullet points
 2. write tests
 3. begin on url parser.
 4. Be done with robottxt
