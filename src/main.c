@@ -8,7 +8,6 @@
 void
 fetch_callback (xmlXPathContextPtr context)
 {
-	FILE *file;
 	char *url, *img, *name, *price;
 	// url
 	Scraper_xmlGetProp (context, (xmlChar *)".//a", (xmlChar *)"href",
@@ -21,13 +20,10 @@ fetch_callback (xmlXPathContextPtr context)
 	// price
 	Scraper_xmlGetContent (context, (xmlChar *)".//a/span", &price);
 	// Clean up
-	file = fopen ("test.txt", "a");
-	fputs (url, file);
-	fprintf (file, "%s\n", url);
-	fprintf (file, "\t%s\n", img);
-	fprintf (file, "\t%s\n", name);
-	fprintf (file, "\t%s\n", price);
-	fclose (file);
+	printf ("%s\n", url);
+	printf ("\t%s\n", img);
+	printf ("\t%s\n", name);
+	printf ("\t%s\n", price);
 	free (url);
 	free (img);
 	free (name);

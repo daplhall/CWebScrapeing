@@ -98,7 +98,6 @@ scrape (const char *url, struct webdump *out)
 	CURL *handle;
 	if ((handle = curl_easy_init ())) {
 		CURLcode err;
-		curl_easy_reset (handle);
 		if ((err = curl_dump (handle, url, out)) != CURLE_OK) {
 			fprintf (stderr, "error: %s \n",
 				 curl_easy_strerror (err));
@@ -122,9 +121,9 @@ evaluate_instructions (struct webdump const *html,
 				     HTML_PARSE_NOERROR);
 	nodes->context = xmlXPathNewContext (nodes->doc);
 	nodes_iter = nodes->exprs + ninstrs;
-	while (ninstrs)
+	while (ninstrs--)
 		*--nodes_iter = xmlXPathEvalExpression (
-		    (xmlChar *)instrs[--ninstrs].expr, nodes->context);
+		    (xmlChar *)instrs[ninstrs].expr, nodes->context);
 	return SUCCESS;
 }
 
