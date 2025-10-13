@@ -12,6 +12,11 @@
 #define SUCCESS	     1
 #define FAILURE	     0
 
+struct webdump {
+	char *data; // should be null terminated
+	size_t size;
+};
+
 struct exprs {
 	xmlXPathObjectPtr *exprs;
 	size_t size;
@@ -19,7 +24,24 @@ struct exprs {
 	xmlXPathContextPtr context;
 };
 
-void
+static void
+webdump_init (struct webdump *inpt)
+{
+	assert (inpt != NULL);
+	inpt->data = (char *)malloc (1);
+	*inpt->data = '\0';
+	inpt->size = 0;
+}
+
+static void
+webdump_cleanup (struct webdump *html)
+{
+	assert ((html != NULL) && (html->data != NULL));
+	free (html->data);
+	html->size = 0;
+}
+
+static void
 expr_init (struct exprs *inpt, size_t nexpr)
 {
 	inpt->exprs
@@ -29,7 +51,7 @@ expr_init (struct exprs *inpt, size_t nexpr)
 	inpt->doc = NULL;
 }
 
-void
+static void
 expr_cleanup (struct exprs *inpt)
 {
 	xmlXPathObjectPtr *ptr = inpt->exprs;
@@ -45,7 +67,7 @@ expr_cleanup (struct exprs *inpt)
 static size_t
 callback_txt (void *ptr, size_t size, size_t nmemb, void *userdata)
 {
-	struct HtmlData *data = (struct HtmlData *)userdata;
+	struct webdump *data = (struct webdump *)userdata;
 	size_t req_size = size * nmemb;
 	size_t newsize = data->size + req_size;
 	char *new;
@@ -62,7 +84,7 @@ callback_txt (void *ptr, size_t size, size_t nmemb, void *userdata)
 }
 
 static CURLcode
-curl_dump (CURL *handle, char const *url, struct HtmlData *out)
+curl_dump (CURL *handle, char const *url, struct webdump *out)
 {
 	curl_easy_setopt (handle, CURLOPT_NOSIGNAL, 1L);
 	curl_easy_setopt (handle, CURLOPT_WRITEFUNCTION, callback_txt);
@@ -72,7 +94,7 @@ curl_dump (CURL *handle, char const *url, struct HtmlData *out)
 }
 
 static int
-scrape (const char *url, struct HtmlData *out)
+scrape (const char *url, struct webdump *out)
 {
 	CURL *handle;
 	if ((handle = curl_easy_init ())) {
@@ -90,7 +112,7 @@ scrape (const char *url, struct HtmlData *out)
 }
 
 static int
-evaluate_instructions (struct HtmlData const *html,
+evaluate_instructions (struct webdump const *html,
 		       struct Scrape_instr const instrs[static 1],
 		       size_t ninstrs, struct exprs *nodes)
 {
@@ -111,14 +133,14 @@ static int
 get_html (char const *url, struct Scrape_instr instr[static 1], size_t ninstr,
 	  struct exprs *nodes)
 {
-	struct HtmlData dump;
-	HtmlData_init (&dump);
+	struct webdump dump;
+	webdump_init (&dump);
 	if (!(scrape (url, &dump))) {
 		fprintf (stderr, "error: Scraping the website failed\n");
 		return FAILURE;
 	}
 	evaluate_instructions (&dump, instr, ninstr, nodes);
-	HtmlData_cleanup (&dump);
+	webdump_cleanup (&dump);
 	return SUCCESS;
 }
 

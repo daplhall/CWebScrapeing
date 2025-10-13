@@ -1,5 +1,4 @@
 add_library(scrape
-    htmldata.c
     scraper.c
     xmlhelpers.c
 )

@@ -3,7 +3,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#include "htmldata.h"
 #include <libxml/xpath.h>
 typedef void (*Scrape_callback) (xmlXPathContextPtr context);
 
