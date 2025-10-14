@@ -4,6 +4,7 @@ set(CMAKE_CXX_FLAGS "${SCRAPE_CXX_FLAGS}")
 add_executable(tests
     test_main.cpp
     scrape.cpp
+    url.cpp
 )
 
 target_link_libraries(tests

@@ -8,7 +8,7 @@
 /*
  * Ideally i would have my own website/page to scrape such that
  * everything would be static.
- */
+*/
 TEST_F (scrapingcourse, html)
 {
 	FILE *file;

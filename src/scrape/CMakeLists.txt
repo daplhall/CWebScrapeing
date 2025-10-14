@@ -1,6 +1,7 @@
 add_library(scrape
     scraper.c
     xmlhelpers.c
+    url.c
 )
 
 target_link_libraries(scrape
