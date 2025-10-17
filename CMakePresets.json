@@ -14,7 +14,7 @@
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "1",
                 "CMAKE_POLICY_VERSION_MINIMUM": "3.5",
                 "SCRAPE_C_LDFLAGS": "",
-                "SCRAPE_C_DEFAULT_FLAGS": "-Wall -Werror -Wextra -Wpedantic -Wformat=2 -Wno-unused-parameter -Wshadow -Wwrite-strings -Wstrict-prototypes -Wold-style-definition -Wredundant-decls -Wnested-externs -Wmissing-include-dirs",
+                "SCRAPE_C_DEFAULT_FLAGS": "-Wall -Werror -Wextra -Wpedantic -Wformat=2 -Wno-unused-parameter -Wshadow -Wwrite-strings -Wstrict-prototypes -Wold-style-definition -Wredundant-decls -Wnested-externs -Wmissing-include-dirs  -Wuninitialized",
                 "SCRAPE_CXX_DEFAULT_FLAGS": "-Wall -Werror -Wextra -Wpedantic -Wformat=2 -Wno-unused-parameter -Wshadow -Wwrite-strings  -Wredundant-decls -Wmissing-include-dirs",
                 "SCRAPE_DEBUG_FLAGS": "-g3 -O0",
                 "SCRAPE_SANITIZER_FLAGS": "-fsanitize=address -fsanitize=leak",

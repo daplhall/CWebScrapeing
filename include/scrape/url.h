@@ -4,8 +4,7 @@
 extern "C" {
 #endif
 
-#include <stddef.h>
-#define T url
+#define T url_T
 struct T {
 	char *scheme;
 	char *userinfo;
@@ -16,7 +15,9 @@ struct T {
 	char *fragment;
 };
 
-void Url_init (char const *url, struct T *init);
+void Url_parse (char const *url, struct T *out);
+void Url_init (struct T *url);
+void Url_print (struct T *url);
 void Url_cleanup (struct T *url);
 
 #undef T

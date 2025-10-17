@@ -1,0 +1,27 @@
+@startuml UrLStateMachine
+
+[*] --> scheme
+scheme --> scheme : is not ":"
+scheme --> optional_authority : is ":"
+optional_authority --> optional_authority : is "/"
+optional_authority --> path : is not "/"
+optional_authority --> parse_authority : is "/"; previous is "/"
+parse_authority --> parse_authority : is "@"
+parse_authority --> parse_authority : else
+parse_authority --> port : is ":"
+port --> port : is digit
+port --> path : else
+
+
+path --> path : else
+path -->query : is "?"
+path -->fragment : is "#"
+path --> end : is "\0"
+query -->query : else 
+query -->end : is "\0"
+query -->fragment : is "#"
+fragment -->fragment : else
+fragment -->end : is "\0"
+end --> [*]
+
+@enduml
